@@ -1,0 +1,79 @@
+variable "cluster_name" {
+  type = string
+}
+
+variable "vpc_id" {
+  type = string
+}
+
+variable "node_subnet_ids" {
+  type = list(string)
+}
+
+variable "node_instance_type" {
+  type = string
+}
+
+variable "aws_auth_roles" {
+  description = "List of IAM roles to map to EKS RBAC"
+  type = list(object({
+    rolearn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
+variable "aws_auth_users" {
+  description = "List of IAM users to map to EKS RBAC"
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
+variable "cluster_endpoint_public_access_cidrs" {
+  description = "List of CIDRs allowed access to EKS cluster endpoint"
+  type = list(string)
+}
+
+
+variable "cluster_sg_rules_cidr" {
+  type = map(object({
+    type      = string
+    from_port = number
+    to_port   = number
+    protocol  = string
+    cidr_blocks = string
+  }))
+}
+
+variable "cluster_sg_rules_sg" {
+  type = map(object({
+    type      = string
+    from_port = number
+    to_port   = number
+    protocol  = string
+  }))
+}
+
+variable "node_sg_rules_cidr" {
+  type = map(object({
+    type      = string
+    from_port = number
+    to_port   = number
+    protocol  = string
+    cidr_blocks = string
+  }))
+}
+
+variable "node_sg_rules_sg" {
+  type = map(object({
+    type      = string
+    from_port = number
+    to_port   = number
+    protocol  = string
+  }))
+}
