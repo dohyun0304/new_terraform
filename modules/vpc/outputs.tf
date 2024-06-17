@@ -20,8 +20,4 @@ output "nat_eip_ids" {
 output "public_instance_eip_ids" {
   value = aws_eip.public_instance_eip[*].id
 }
-output "public_instance_eip" {
-  value = aws_eip.public_instance_eip
-}
-
 

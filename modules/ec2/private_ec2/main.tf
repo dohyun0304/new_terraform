@@ -1,34 +1,35 @@
 resource "aws_instance" "private_instance" {
-  count         = var.instance_count
-  ami           = var.ami_id
-  instance_type = var.instance_type
+  for_each = var.instances
 
-  subnet_id              = var.subnet_id
-  vpc_security_group_ids = [aws_security_group.security_group.id]
+  ami           = each.value.ami_id
+  instance_type = each.value.instance_type
+  subnet_id     = each.value.subnet_id
+
   tags = {
-    Name        = "${var.name}-${count.index}"
-    Environment = var.environment
+    Name        = "${each.value.name}${each.key}"
+    Environment = each.value.environment
   }
-  depends_on = [aws_security_group_rule.private_instance_sg_rule]
+  vpc_security_group_ids = [aws_security_group.private_security_group.id]
+
+  lifecycle {
+    ignore_changes = [ami]
+  }
 }
 
-resource "aws_security_group" "security_group" {
-  name        = "${var.name}-sg"
-  description = "Security group for ${var.name}"
+resource "aws_security_group" "private_security_group" {
+  name        = "private-instance-sg"
+  description = "Security group for private instances"
   vpc_id      = var.vpc_id
 }
 
-
 resource "aws_security_group_rule" "private_instance_sg_rule" {
-  for_each = { for idx, rule in var.private_instance_sg_rule["instance1"] : idx => rule }
+  for_each = var.instance_sg_rule
 
-  type      = each.value.type
-  from_port = each.value.from_port
-  to_port   = each.value.to_port
-  protocol  = each.value.protocol
-
-  security_group_id = aws_security_group.security_group.id
-
+  type        = each.value.type
+  from_port   = each.value.from_port
+  to_port     = each.value.to_port
+  protocol    = each.value.protocol
   cidr_blocks = each.value.cidr_blocks
-}
 
+  security_group_id = aws_security_group.private_security_group.id
+}

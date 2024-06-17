@@ -71,65 +71,54 @@ variable "public_route_cidrs" {
 variable "node_route_cidrs" {
 }
 
-variable "public_instance_sg_rule" {
-  description = "Security group rules"
-  type = map(list(object({
-    type        = string
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = list(string)
-  })))
-}
-
-variable "private_instance_sg_rule" {
-  description = "Security group rules"
-  type = map(list(object({
-    type        = string
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = list(string)
-  })))
-}
 
 
 
 #####################EC2#####################
-variable "public_instance_count" {
-  description = "Number of public instances to create"
+variable "public_instances" {
+  description = "Map of public instances"
+  type = map(object({
+    ami_id        = string
+    instance_type = string
+    name          = string
+    environment   = string
+    eip           = bool
+  }))
 }
 
-variable "private_instance_count" {
-  description = "Number of private instances to create"
+variable "private_instances" {
+  description = "Map of private instances"
+  type = map(object({
+    ami_id        = string
+    instance_type = string
+    name          = string
+    environment   = string
+    eip           = bool
+  }))
 }
 
-variable "public_ami_id" {
-  description = "ID of the AMI to use for the public instance"
+variable "public_instance_sg_rule" {
+  description = "Security group rules for public instances"
+  type = map(object({
+    type        = string
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = list(string)
+  }))
 }
 
-variable "private_ami_id" {
-  description = "ID of the AMI to use for the private instance"
+variable "private_instance_sg_rule" {
+  description = "Security group rules for private instances"
+  type = map(object({
+    type        = string
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = list(string)
+  }))
 }
 
-variable "public_instance_type" {
-  description = "Type of public instance"
-}
-
-variable "private_instance_type" {
-  description = "Type of private instance"
-}
-
-variable "public_name" {
-  description = "Name tag for public resources"
-}
-
-variable "private_name" {
-  description = "Name tag for private resources"
-}
-variable "environment" {
-  description = "Environment tag for resources"
-}
 
 
 ####################EKS
